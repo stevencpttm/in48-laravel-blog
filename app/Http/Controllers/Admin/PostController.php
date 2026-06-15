@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\Tag;
 
 class PostController extends Controller
 {
@@ -28,9 +29,11 @@ class PostController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
 
         return view('admin.posts.create', [
             'categories' => $categories,
+            'tags' => $tags,
         ]);
     }
 
@@ -43,7 +46,12 @@ class PostController extends Controller
             'title' => ['required', 'max:255'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'content' => ['required'],
+            'tag_ids' => ['array'],
+            'tag_ids.*' => ['exists:tags,id'],
         ]);
+
+        $tagIds = $data['tag_ids'] ?? [];
+        unset($data['tag_ids']);
 
         $data['is_published'] = $request->has('is_published');
 
@@ -53,6 +61,11 @@ class PostController extends Controller
         $post->content = $data['content'];
         $post->is_published = $data['is_published'];
         $post->save();
+
+        // update relation
+        // 1. delete all records in post_tag table where post_id = $post->id
+        // 2. create relation of $post->id <> $tagIds
+        $post->tags()->sync($tagIds);
 
         return redirect()->route('admin.posts.index');
     }
@@ -71,10 +84,12 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $categories = Category::orderBy('name')->get();
+        $tags = Tag::orderBy('name')->get();
 
         return view('admin.posts.edit', [
             'post' => $post,
             'categories' => $categories,
+            'tags' => $tags,
         ]);
     }
 
@@ -87,7 +102,12 @@ class PostController extends Controller
             'title' => ['required', 'max:255'],
             'category_id' => ['nullable', 'exists:categories,id'],
             'content' => ['required'],
+            'tag_ids' => ['array'],
+            'tag_ids.*' => ['exists:tags,id'],
         ]);
+
+        $tagIds = $data['tag_ids'] ?? [];
+        unset($data['tag_ids']);
 
         $data['is_published'] = $request->has('is_published');
 
@@ -96,6 +116,8 @@ class PostController extends Controller
         $post->content = $data['content'];
         $post->is_published = $data['is_published'];
         $post->save();
+
+        $post->tags()->sync($tagIds);
 
         return redirect()->route('admin.posts.index');
     }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -30,6 +31,15 @@ class DatabaseSeeder extends Seeder
                 $category = new Category();
                 $category->name = $name;
                 $category->save();
+            }
+        }
+
+        // Init tags
+        foreach (['tutorial', 'thoughts', 'notes', 'life'] as $name) {
+            if (!Tag::where('name', $name)->exists()) {
+                $tag = new Tag;
+                $tag->name = $name;
+                $tag->save();
             }
         }
     }

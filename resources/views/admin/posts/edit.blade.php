@@ -35,6 +35,18 @@
     </div>
 
     <div>
+      <label class="text-sm font-medium" for="category_id">Tags</label>
+      <div class="mt-2 flex flex-wrap gap-3">
+        @foreach ($tags as $tag)
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="tag_ids[]" value="{{ $tag->id }}" @checked(in_array($tag->id, old('tag_ids', $post->tags->pluck('id')->all())))>
+          {{ $tag->name }}
+        </label>
+        @endforeach
+      </div>
+    </div>
+
+    <div>
       <label class="text-sm font-medium" for="content">Content</label>
       <textarea id="content" name="content" class="mt-1 w-full rounded border px-3 py-2">{{ old('content', $post->content) }}</textarea>
       @error('content')

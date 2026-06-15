@@ -14,7 +14,7 @@
     <div class="flex items-center justify-between border-b p-4 last:border-b-0">
       <div>
         <h2 class="font-semibold">{{ $post->title }}</h2>
-        <div class="flex gap-4 items-center">
+        <div class="flex gap-2 items-center">
           <p class="text-sm text-gray-500">
             {{ $post->is_published ? 'Published' : 'Draft' }}
           </p>
@@ -22,6 +22,14 @@
           <h4 class="text-gray-900 bg-gray-200 px-1 py-0.5 rounded inline-block text-sm">
             {{ $post->category->name }}
           </h4>
+          @endif
+
+          @if ($post->tags)
+            @foreach ($post->tags as $tag)
+            <span class="text-sm inline-block rounded px-1 py-0.5 bg-blue-100 text-blue-800">
+              {{ $tag->name }}
+            </span>
+            @endforeach
           @endif
         </div>
       </div>

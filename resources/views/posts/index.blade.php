@@ -18,6 +18,13 @@
                     {{ $post->category->name }}
                 </span>
                 @endif
+                @if ($post->tags)
+                    @foreach ($post->tags as $tag)
+                    <span class="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 text-sm rounded-full">
+                        {{ $tag->name }}
+                    </span>
+                    @endforeach
+                @endif
                 <p class="mt-3 text-gray-700">{{ $post->content }}</p>
                 <a href="{{ route('posts.show', $post) }}" class="mt-4 inline-block text-sm text-blue-600">Read more</a>
             </article>
@@ -32,7 +39,7 @@
                 <div class="mt-3 flex flex-col gap-2 text-sm">
                     <a href="{{ route('posts.index') }}">All</a>
                     @foreach ($categories as $category)
-                    <a href="{{ route('posts.index', ['category' => $category->id]) }}">
+                    <a href="{{ route('posts.index', ['category' => $category->id, 'tag' => $selectedTag ?? null]) }}">
                         {{ $category->name }}
                         ({{ count($category->posts) }})
                     </a>
@@ -41,6 +48,17 @@
             </div>
 
             {{-- Tags --}}
+            <div class="mt-4 border-t border-slate-200 pt-4">
+                <h2 class="font-semibold">Tags</h2>
+                <div class="mt-3 flex flex-col gap-2 text-sm">
+                    @foreach ($tags as $tag)
+                    <a href="{{ route('posts.index', ['tag' => $tag->id, 'category' => $selectedCategory ?? null]) }}">
+                        {{ $tag->name }}
+                        ({{ count($tag->posts) }})
+                    </a>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </aside>
 </div>
